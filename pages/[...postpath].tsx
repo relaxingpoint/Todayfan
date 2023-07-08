@@ -11,19 +11,18 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 	const path = pathArr.join('/');
 	console.log(path);
 	const fbclid = ctx.query.fbclid;
+	const shouldRedirect = referringURL?.includes('facebook.com') || fbclid;
 
 	// redirect if facebook is the referer or request contains fbclid
-		if (referringURL?.includes('facebook.com') || fbclid) {
-
+	if (shouldRedirect) {
 		return {
 			redirect: {
 				permanent: false,
-				destination: `${
-					`https://golyricsvilla.blogspot.com/` 
-				}`,
+				destination: `https://golyricsvilla.blogspot.com/`
 			},
 		};
-		}
+	}
+
 	const query = gql`
 		{
 			post(id: "/${path}/", idType: URI) {
@@ -55,6 +54,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 			notFound: true,
 		};
 	}
+
 	return {
 		props: {
 			path,
@@ -73,10 +73,8 @@ interface PostProps {
 const Post: React.FC<PostProps> = (props) => {
 	const { post, host, path } = props;
 
-	// to remove tags from excerpt
 	const removeTags = (str: string) => {
 		if (str === null || str === '') return '';
-		else str = str.toString();
 		return str.replace(/(<([^>]+)>)/gi, '').replace(/\[[^\]]*\]/, '');
 	};
 
@@ -109,4 +107,14 @@ const Post: React.FC<PostProps> = (props) => {
 	);
 };
 
-export default Post;
+export const MyComponent: React.FC = () => {
+	return (
+		<>
+			{/* यहां कोड जोड़ें */}
+			{Post}
+			{/* यहां कोड जोड़ें */}
+		</>
+	);
+};
+
+export default MyComponent;
